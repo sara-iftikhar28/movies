@@ -5,6 +5,7 @@ import Pagination from "./common/pagination";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/listgroup";
 import { getGenres } from "../services/fakeGenreService";
+import _ from "lodash";
 
 class Movies extends Component {
   state = {
@@ -12,13 +13,15 @@ class Movies extends Component {
     pageSize: 4,
     currentPage: 1,
     genres: [],
+    sortedColumn: { path: "title", order: "asc" },
   };
 
   componentDidMount() {
+    const genres = [{ name: "All Movies", _id: "" }, ...getGenres()];
     this.setState({
       movies: getMovies(),
-      genres: getGenres(),
-      selectedItem: getGenres()[1],
+      genres,
+      selectedGenre: getGenres()[0],
     });
   }
 
@@ -45,8 +48,24 @@ class Movies extends Component {
     });
   };
 
-  handleItemSelect = (genre) => {
-    const movies = this.state.movies.filter((x) => x.genre._id == genre.id);
+  handleGenreSelect = (genre) => {
+    this.setState({
+      selectedGenre: genre,
+      currentPage: 1,
+    });
+  };
+
+  handleSort = (path) => {
+    const sortColumn = { ...this.state.sortedColumn };
+    if (sortColumn.path === path) {
+      sortColumn.order = sortColumn.order === "asc" ? "desc" : "asc";
+    } else {
+      sortColumn.order = "asc";
+      sortColumn.path = path;
+    }
+    this.setState({
+      sortedColumn: sortColumn,
+    });
   };
 
   render() {
@@ -56,12 +75,24 @@ class Movies extends Component {
       currentPage,
       movies: allMovies,
       genres,
-      selectedItem,
+      sortedColumn,
+      selectedGenre,
     } = this.state;
 
     if (count === 0) return <p>There are no movies in the database</p>;
 
-    const movies = paginate([...allMovies], currentPage, pageSize);
+    const filtered =
+      selectedGenre && selectedGenre._id
+        ? allMovies.filter((x) => x.genre._id == selectedGenre._id)
+        : allMovies;
+
+    const sorted = _.orderBy(
+      filtered,
+      [sortedColumn.path],
+      [sortedColumn.order]
+    );
+
+    const movies = paginate(sorted, currentPage, pageSize);
 
     return (
       <React.Fragment>
@@ -69,7 +100,7 @@ class Movies extends Component {
           <div className="col-sm-4">
             <ListGroup
               items={genres}
-              selectedItem={selectedItem}
+              selectedItem={selectedGenre}
               onItemSelect={this.handleGenreSelect}
             ></ListGroup>
           </div>
@@ -78,10 +109,14 @@ class Movies extends Component {
             <table className="table">
               <thead>
                 <tr>
-                  <th scope="col">Title</th>
-                  <th scope="col">Genre</th>
-                  <th scope="col">Stock</th>
-                  <th scope="col">Rate</th>
+                  <th onClick={() => this.handleSort("title")}>Title</th>
+                  <th onClick={() => this.handleSort("genre.name")}>Genre</th>
+                  <th onClick={() => this.handleSort("numberInStock")}>
+                    Stock
+                  </th>
+                  <th onClick={() => this.handleSort("dailyRentalRate")}>
+                    Rate
+                  </th>
                   <th></th>
                   <th></th>
                 </tr>
@@ -115,7 +150,7 @@ class Movies extends Component {
             </table>
 
             <Pagination
-              itemCount={count}
+              itemCount={filtered.length}
               pageSize={pageSize}
               onPageChange={this.handlePageChange}
               currentPage={currentPage}
