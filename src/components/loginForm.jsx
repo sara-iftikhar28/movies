@@ -4,8 +4,13 @@ import Joi from "joi-browser";
 
 class LoginForm extends Component {
   state = {
-    account: { username: "", password: "" },
+    data: { username: "", password: "" },
     errors: {},
+  };
+
+  schema = {
+    username: Joi.string().required(),
+    password: Joi.string().required(),
   };
 
   handleSubmit = (e) => {
@@ -21,37 +26,39 @@ class LoginForm extends Component {
   };
 
   validate = () => {
+    const result = Joi.validate(this.state.data, this.schema, {
+      abortEarly: false,
+    });
+    if (!result.error) return null;
+
     const errors = {};
-    const { account } = this.state;
-    if (account.username.trim() === "")
-      errors.username = "Username is required";
-    if (account.password.trim() === "")
-      errors.password = "Password is required";
-    return Object.keys(errors).length === 0 ? null : errors;
+    for (let item of result.error.details) errors[item.path[0]] = item.message;
+
+    return errors;
   };
 
   validateProperty = (input) => {
-    if (input.name === "username") {
-      if (input.value.trim() === "") return "Username is required";
-    }
-    if (input.name === "password") {
-      if (input.value.trim() === "") return "Password is required";
-    }
+    const { name, value } = input;
+    const obj = { [name]: value };
+    const schema = { [name]: this.schema[name] };
+    const result = Joi.validate(obj, schema);
+    return result.error ? result.error.details[0].message : null;
   };
 
   handleChange = (e) => {
     const errors = { ...this.state.errors };
     const errorMessage = this.validateProperty(e.currentTarget);
-    if (errorMessage) errors[e.currentTarget.name] = errorMessage;
-    else delete errorMessage[e.currentTarget.name];
+    if (errorMessage) {
+      errors[e.currentTarget.name] = errorMessage;
+    } else delete errors[e.currentTarget.name];
 
-    const account = { ...this.state.account };
-    account[e.currentTarget.name] = e.currentTarget.value;
-    this.setState({ account });
+    const data = { ...this.state.data };
+    data[e.currentTarget.name] = e.currentTarget.value;
+    this.setState({ data, errors });
   };
 
   render() {
-    const { account, errors } = this.state;
+    const { data, errors } = this.state;
     return (
       <React.Fragment>
         <h1>Login Form</h1>
@@ -59,19 +66,23 @@ class LoginForm extends Component {
           <Input
             name="username"
             label="Username"
-            value={account.username}
+            value={data.username}
             onChange={this.handleChange}
             error={errors?.username}
           ></Input>
           <Input
             name="password"
             label="Password"
-            value={account.password}
+            value={data.password}
             onChange={this.handleChange}
             error={errors?.password}
           ></Input>
 
-          <button type="submit" className="btn btn-primary">
+          <button
+            disabled={this.validate()}
+            type="submit"
+            className="btn btn-primary"
+          >
             Submit
           </button>
         </form>
