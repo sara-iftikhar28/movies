@@ -14,7 +14,8 @@ class TableHeader extends Component {
 
   renderSortIcon = (column) => {
     if (column.path === this.props.sortedColumn.path)
-      if (column.order === "asc") return <i className="fa fa-sort-asc"></i>;
+      if (this.props.sortedColumn.order === "asc")
+        return <i className="fa fa-sort-asc"></i>;
       else return <i className="fa fa-sort-desc"></i>;
     return null;
   };
