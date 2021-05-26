@@ -99,8 +99,6 @@ class Movies extends Component {
             ></ListGroup>
           </div>
           <div className="col-sm-8">
-            {/* <Link to="/movies/new">
-
             <Link to="/movies/new">
               <button
                 className="btn btn-primary btn-sm"
@@ -108,8 +106,7 @@ class Movies extends Component {
               >
                 New Movie
               </button>
-    </Link> */}
-
+            </Link>
             <p>Showing {filtered.length} movies in the database</p>
             <MoviesTable
               onDelete={this.handleDelete}
@@ -118,7 +115,6 @@ class Movies extends Component {
               onSort={this.handleSort}
               sortedColumn={sortedColumn}
             ></MoviesTable>
-
             <Pagination
               itemCount={filtered.length}
               pageSize={pageSize}
