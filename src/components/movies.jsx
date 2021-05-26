@@ -99,13 +99,12 @@ class Movies extends Component {
             ></ListGroup>
           </div>
           <div className="col-sm-8">
-            <Link to="/movies/new">
-              <button
-                className="btn btn-primary btn-sm"
-                onClick={this.redirect}
-              >
-                New Movie
-              </button>
+            <Link
+              to="/movies/new"
+              className="btn btn-primary"
+              style={{ marginTop: "20px" }}
+            >
+              New Movie
             </Link>
             <p>Showing {filtered.length} movies in the database</p>
             <MoviesTable
