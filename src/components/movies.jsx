@@ -99,7 +99,10 @@ class Movies extends Component {
             ></ListGroup>
           </div>
           <div className="col-sm-8">
+<<<<<<< Updated upstream
             {/* <Link to="/movies/new">
+=======
+>>>>>>> Stashed changes
             <Link to="/movies/new">
               <button
                 className="btn btn-primary btn-sm"
@@ -107,8 +110,12 @@ class Movies extends Component {
               >
                 New Movie
               </button>
+<<<<<<< Updated upstream
             </Link> */}
 
+=======
+            </Link>
+>>>>>>> Stashed changes
             <p>Showing {filtered.length} movies in the database</p>
             <MoviesTable
               onDelete={this.handleDelete}
