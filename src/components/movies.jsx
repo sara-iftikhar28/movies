@@ -100,6 +100,7 @@ class Movies extends Component {
           </div>
           <div className="col-sm-8">
             {/* <Link to="/movies/new">
+            <Link to="/movies/new">
               <button
                 className="btn btn-primary btn-sm"
                 onClick={this.redirect}
@@ -107,6 +108,7 @@ class Movies extends Component {
                 New Movie
               </button>
             </Link> */}
+
             <p>Showing {filtered.length} movies in the database</p>
             <MoviesTable
               onDelete={this.handleDelete}
