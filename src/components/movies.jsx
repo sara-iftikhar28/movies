@@ -6,6 +6,7 @@ import ListGroup from "./common/listgroup";
 import { getGenres } from "../services/fakeGenreService";
 import _ from "lodash";
 import MoviesTable from "./moviesTable";
+import { Link } from "react-router-dom";
 
 class Movies extends Component {
   state = {
@@ -21,7 +22,7 @@ class Movies extends Component {
     this.setState({
       movies: getMovies(),
       genres,
-      selectedGenre: getGenres()[0],
+      selectedGenre: genres[0],
     });
   }
 
@@ -98,6 +99,14 @@ class Movies extends Component {
             ></ListGroup>
           </div>
           <div className="col-sm-8">
+            {/* <Link to="/movies/new">
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={this.redirect}
+              >
+                New Movie
+              </button>
+            </Link> */}
             <p>Showing {filtered.length} movies in the database</p>
             <MoviesTable
               onDelete={this.handleDelete}
